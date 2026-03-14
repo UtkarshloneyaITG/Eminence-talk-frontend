@@ -7,7 +7,7 @@ export const getSocket = () => socket;
 export const connectSocket = (token) => {
   if (socket?.connected) return socket;
 
-  socket = io(import.meta.env.VITE_SOCKET_URL || 'http://localhost:5000', {
+  socket = io('https://eminence-talk-backend.vercel.app', {
     auth: { token },
     transports: ['websocket', 'polling'],
     reconnection: true,
