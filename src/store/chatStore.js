@@ -127,6 +127,22 @@ const useChatStore = create((set, get) => ({
     });
   },
 
+  // ─── Create Chats ─────────────────────────────────────────────────────────
+  createDirectChat: async (userId) => {
+    const { data } = await api.get(`/api/chats/direct/${userId}`);
+    set((state) => {
+      const exists = state.chats.find((c) => c._id === data.chat._id);
+      return { chats: exists ? state.chats : [data.chat, ...state.chats] };
+    });
+    return data.chat;
+  },
+
+  createGroupChat: async (name, memberIds) => {
+    const { data } = await api.post('/api/chats/group', { name, members: memberIds });
+    set((state) => ({ chats: [data.chat, ...state.chats] }));
+    return data.chat;
+  },
+
   // ─── Search ───────────────────────────────────────────────────────────────
   searchMessages: async (chatId, query) => {
     const { data } = await api.get(`/api/messages/${chatId}/search?q=${query}`);

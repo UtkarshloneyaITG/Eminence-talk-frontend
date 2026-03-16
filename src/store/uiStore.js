@@ -5,7 +5,7 @@ const useUIStore = create(
   persist(
     (set) => ({
       // Cursor style: 'particles' | 'morph' | 'magnetic' | 'gsap'
-      cursorStyle: 'particles',
+      cursorStyle: 'morph',
       setCursorStyle: (style) => set({ cursorStyle: style }),
 
       // Theme accent color
@@ -51,6 +51,7 @@ const useUIStore = create(
     }),
     {
       name: 'et-ui',
+      version: 2,
       partialize: (state) => ({
         cursorStyle: state.cursorStyle,
         accentColor: state.accentColor,

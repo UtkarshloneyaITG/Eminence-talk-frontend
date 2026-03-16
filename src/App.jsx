@@ -16,6 +16,8 @@ const Settings = lazy(() => import('@/pages/Settings'));
 
 // Modals
 import { AnimatePresence as AP } from 'framer-motion';
+const NewChatModal = lazy(() => import('@/components/modals/NewChatModal'));
+const NewGroupModal = lazy(() => import('@/components/modals/NewGroupModal'));
 
 const PageLoader = () => (
   <div className="min-h-screen bg-space-950 flex items-center justify-center">
@@ -81,11 +83,21 @@ const App = () => {
         </AnimatePresence>
       </Suspense>
 
-      {/* Global Settings Modal */}
+      {/* Global Modals */}
       <AnimatePresence>
         {modal === 'settings' && (
           <Suspense fallback={null}>
             <Settings onClose={closeModal} />
+          </Suspense>
+        )}
+        {modal === 'newChat' && (
+          <Suspense fallback={null}>
+            <NewChatModal />
+          </Suspense>
+        )}
+        {modal === 'newGroup' && (
+          <Suspense fallback={null}>
+            <NewGroupModal />
           </Suspense>
         )}
       </AnimatePresence>
