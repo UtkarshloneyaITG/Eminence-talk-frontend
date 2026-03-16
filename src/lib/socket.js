@@ -7,7 +7,7 @@ export const getSocket = () => socket;
 export const connectSocket = (token) => {
   if (socket?.connected) return socket;
 
-  socket = io('https://eminence-talk-backend.vercel.app', {
+  socket = io('https://eminence-talk-backend.onrender.com', {
     auth: { token },
     transports: ['websocket', 'polling'],
     reconnection: true,

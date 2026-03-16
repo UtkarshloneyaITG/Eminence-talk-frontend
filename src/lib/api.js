@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 const api = axios.create({
-  baseURL: 'https://eminence-talk-backend.vercel.app',
+  baseURL: 'https://eminence-talk-backend.onrender.com',
   withCredentials: true,
   timeout: 15000,
 });
@@ -27,7 +27,7 @@ api.interceptors.response.use(
       try {
         const refreshToken = localStorage.getItem('et_refresh_token');
         const { data } = await axios.post(
-          'https://eminence-talk-backend.vercel.app/api/auth/refresh',
+          'https://eminence-talk-backend.onrender.com/api/auth/refresh',
           { refreshToken }
         );
         localStorage.setItem('et_access_token', data.accessToken);
