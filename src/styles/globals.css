@@ -2,6 +2,18 @@
 @tailwind components;
 @tailwind utilities;
 
+/* ─── Theme CSS Variables (set dynamically by App.jsx) ──────────────────────── */
+:root {
+  --accent: #6366f1;
+  --accent-rgb: 99, 102, 241;
+  /* Background base (main page bg, matches active bgScene) */
+  --bg-base: #050510;
+  --bg-base-rgb: 5, 5, 16;
+  /* Background surface (slightly lighter — for modals/popups/drawers) */
+  --bg-surface: #0a0a1a;
+  --bg-surface-rgb: 10, 10, 26;
+}
+
 /* ─── Base ──────────────────────────────────────────────────────────────────── */
 @layer base {
   *, *::before, *::after { box-sizing: border-box; }
@@ -9,7 +21,7 @@
   html { scroll-behavior: smooth; -webkit-text-size-adjust: 100%; }
 
   body {
-    @apply bg-space-950 text-white antialiased font-sans;
+    @apply bg-base text-white antialiased font-sans;
     background-image:
       radial-gradient(ellipse at 20% 50%, rgba(99, 102, 241, 0.04) 0%, transparent 50%),
       radial-gradient(ellipse at 80% 20%, rgba(6, 182, 212, 0.03) 0%, transparent 50%);
@@ -87,6 +99,27 @@
   }
 }
 
+/* ─── Accent-aware classes (hover/focus can't use inline styles) ─────────────── */
+.input-accent-focus:focus {
+  border-color: rgba(var(--accent-rgb), 0.5) !important;
+}
+.btn-canvas-hover:hover {
+  color: var(--accent) !important;
+  background-color: rgba(var(--accent-rgb), 0.1) !important;
+}
+.btn-accent-hover:hover {
+  background-color: rgba(var(--accent-rgb), 0.25) !important;
+  border-color: rgba(var(--accent-rgb), 0.3) !important;
+  color: var(--accent) !important;
+}
+.btn-dashed-hover:hover {
+  border-color: rgba(var(--accent-rgb), 0.4) !important;
+  background-color: rgba(var(--accent-rgb), 0.05) !important;
+}
+.group:hover .group-hover-accent {
+  color: var(--accent) !important;
+}
+
 /* ─── Utilities ──────────────────────────────────────────────────────────────── */
 @layer utilities {
   .hide-native-cursor * { cursor: none !important; }
@@ -97,6 +130,15 @@
   /* Perspective for 3D effects */
   .perspective-1000 { perspective: 1000px; }
   .transform-3d { transform-style: preserve-3d; }
+
+  /* Theme-aware background utilities (driven by CSS variables) */
+  .bg-base    { background-color: var(--bg-base); }
+  .bg-surface { background-color: var(--bg-surface); }
+  .bg-surface-95 { background-color: rgba(var(--bg-surface-rgb), 0.95); }
+  .bg-surface-98 { background-color: rgba(var(--bg-surface-rgb), 0.98); }
+  .bg-base-90    { background-color: rgba(var(--bg-base-rgb), 0.90); }
+  .border-base   { border-color: var(--bg-base); }
+  .border-surface { border-color: var(--bg-surface); }
 }
 
 /* ─── Custom Animations ──────────────────────────────────────────────────────── */

@@ -56,13 +56,13 @@ const MessageList = ({ chatId }) => {
     >
       {isLoadingMessages && chatMessages.length === 0 && (
         <div className="flex items-center justify-center h-full">
-          <span className="w-8 h-8 border-2 border-violet-500/30 border-t-violet-500 rounded-full animate-spin" />
+          <span className="w-8 h-8 border-2 rounded-full animate-spin" style={{ borderColor: 'rgba(var(--accent-rgb), 0.25)', borderTopColor: 'var(--accent)' }} />
         </div>
       )}
 
       {isLoadingMessages && chatMessages.length > 0 && (
         <div className="flex justify-center py-2">
-          <span className="w-5 h-5 border-2 border-violet-500/30 border-t-violet-500 rounded-full animate-spin" />
+          <span className="w-5 h-5 border-2 rounded-full animate-spin" style={{ borderColor: 'rgba(var(--accent-rgb), 0.25)', borderTopColor: 'var(--accent)' }} />
         </div>
       )}
 

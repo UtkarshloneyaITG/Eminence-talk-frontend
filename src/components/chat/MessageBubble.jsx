@@ -7,6 +7,7 @@ import useUIStore from '@/store/uiStore';
 import useAuthStore from '@/store/authStore';
 import { socketEmit } from '@/lib/socket';
 import UserAvatar from '@/components/ui/UserAvatar';
+import ConfirmModal from '@/components/ui/ConfirmModal';
 import api from '@/lib/api';
 import toast from 'react-hot-toast';
 
@@ -50,7 +51,7 @@ const MessageContextMenu = ({ x, y, message, isSelf, onClose, onReact, onReply, 
       exit={{ opacity: 0, scale: 0.9 }}
       transition={{ duration: 0.12 }}
       style={{ position: 'fixed', top: pos.y, left: pos.x, zIndex: 9999 }}
-      className="min-w-[200px] bg-space-900/98 backdrop-blur-xl border border-white/[0.08] rounded-xl shadow-2xl overflow-hidden py-1.5"
+      className="min-w-[200px] bg-surface-98 backdrop-blur-xl border border-white/[0.08] rounded-xl shadow-2xl overflow-hidden py-1.5"
     >
       {/* Quick emoji reactions */}
       <div className="flex items-center justify-between px-3 py-2 border-b border-white/[0.06] mb-1">
@@ -118,6 +119,7 @@ const MessageBubble = ({ message, isSelf, showAvatar, showName }) => {
   const [menu, setMenu] = useState(null); // { x, y }
   const [isEditing, setIsEditing] = useState(false);
   const [editContent, setEditContent] = useState(message.content);
+  const [confirmDelete, setConfirmDelete] = useState(false);
   const { setReplyingTo } = useUIStore();
   const { user } = useAuthStore();
 
@@ -141,7 +143,7 @@ const MessageBubble = ({ message, isSelf, showAvatar, showName }) => {
   };
 
   const handleDelete = async () => {
-    if (!confirm('Delete this message?')) return;
+    setConfirmDelete(false);
     try {
       await socketEmit('message:delete', { messageId: message._id });
     } catch {
@@ -193,15 +195,18 @@ const MessageBubble = ({ message, isSelf, showAvatar, showName }) => {
         <div className={`flex flex-col max-w-[75%] ${isSelf ? 'items-end' : 'items-start'}`}>
           {/* Sender name (group chats) */}
           {showName && !isSelf && (
-            <span className="text-violet-400 text-xs font-medium mb-1 px-1">
+            <span className="text-xs font-medium mb-1 px-1" style={{ color: 'var(--accent)' }}>
               {message.sender?.username}
             </span>
           )}
 
           {/* Reply preview */}
           {message.replyTo && (
-            <div className={`mb-1.5 px-3 py-2 rounded-lg border-l-2 border-violet-500 bg-white/[0.04] text-xs text-white/50 max-w-full ${isSelf ? 'text-right' : ''}`}>
-              <span className="text-violet-400 font-medium">{message.replyTo.sender?.username}</span>
+            <div
+              className={`mb-1.5 px-3 py-2 rounded-lg border-l-2 bg-white/[0.04] text-xs text-white/50 max-w-full ${isSelf ? 'text-right' : ''}`}
+              style={{ borderLeftColor: 'var(--accent)' }}
+            >
+              <span className="font-medium" style={{ color: 'var(--accent)' }}>{message.replyTo.sender?.username}</span>
               <p className="truncate mt-0.5">{message.replyTo.content || `[${message.replyTo.type}]`}</p>
             </div>
           )}
@@ -215,19 +220,28 @@ const MessageBubble = ({ message, isSelf, showAvatar, showName }) => {
                   value={editContent}
                   onChange={(e) => setEditContent(e.target.value)}
                   onKeyDown={(e) => e.key === 'Enter' && !e.shiftKey && handleEdit()}
-                  className="bg-white/[0.08] border border-violet-500/40 rounded-xl px-3 py-2 text-white text-sm focus:outline-none min-w-[160px]"
+                  className="bg-white/[0.08] rounded-xl px-3 py-2 text-white text-sm focus:outline-none min-w-[160px] border"
+                  style={{ borderColor: 'rgba(var(--accent-rgb), 0.4)' }}
                 />
                 <div className="flex gap-1">
-                  <button onClick={handleEdit} className="text-xs text-violet-400 hover:text-violet-300 px-2 py-1 rounded-lg bg-violet-600/20">Save</button>
+                  <button
+                    onClick={handleEdit}
+                    className="text-xs px-2 py-1 rounded-lg"
+                    style={{ color: 'var(--accent)', backgroundColor: 'rgba(var(--accent-rgb), 0.15)' }}
+                  >Save</button>
                   <button onClick={() => setIsEditing(false)} className="text-xs text-white/30 hover:text-white/60 px-2 py-1 rounded-lg bg-white/[0.04]">Cancel</button>
                 </div>
               </div>
             ) : (
               <div
                 className={`px-3.5 py-2.5 rounded-2xl select-text ${isSelf
-                  ? 'bg-gradient-to-br from-violet-600 to-indigo-600 text-white rounded-br-sm shadow-neon'
+                  ? 'text-white rounded-br-sm'
                   : 'bg-white/[0.07] border border-white/[0.08] text-white/90 rounded-bl-sm'
                 }`}
+                style={isSelf ? {
+                  background: `linear-gradient(135deg, var(--accent), rgba(var(--accent-rgb), 0.7))`,
+                  boxShadow: `0 0 20px rgba(var(--accent-rgb), 0.45)`,
+                } : {}}
               >
                 {/* Image */}
                 {message.type === 'image' && message.attachments?.[0] && (
@@ -241,8 +255,8 @@ const MessageBubble = ({ message, isSelf, showAvatar, showName }) => {
                 {/* Canvas drawing */}
                 {message.type === 'canvas' && message.attachments?.[0] && (
                   <div className="relative">
-                    <img src={message.attachments[0].url} alt="canvas" className="rounded-xl max-w-xs border border-violet-500/20" />
-                    <span className="absolute top-1.5 left-1.5 text-[10px] bg-violet-600/80 text-white px-1.5 py-0.5 rounded-md">Drawing</span>
+                    <img src={message.attachments[0].url} alt="canvas" className="rounded-xl max-w-xs border" style={{ borderColor: 'rgba(var(--accent-rgb), 0.25)' }} />
+                    <span className="absolute top-1.5 left-1.5 text-[10px] text-white px-1.5 py-0.5 rounded-md" style={{ backgroundColor: 'rgba(var(--accent-rgb), 0.8)' }}>Drawing</span>
                   </div>
                 )}
                 {/* Text */}
@@ -263,11 +277,16 @@ const MessageBubble = ({ message, isSelf, showAvatar, showName }) => {
                 <button
                   key={r.emoji}
                   onClick={() => handleReact(r.emoji)}
-                  className={`flex items-center gap-1 px-2 py-0.5 rounded-full text-xs border transition-all ${
-                    r.users.includes(user?._id)
-                      ? 'bg-violet-600/20 border-violet-500/40 text-white'
-                      : 'bg-white/[0.05] border-white/[0.08] text-white/60 hover:bg-white/[0.08]'
-                  }`}
+                  className="flex items-center gap-1 px-2 py-0.5 rounded-full text-xs border transition-all"
+                  style={r.users.includes(user?._id) ? {
+                    backgroundColor: 'rgba(var(--accent-rgb), 0.2)',
+                    borderColor: 'rgba(var(--accent-rgb), 0.4)',
+                    color: '#fff',
+                  } : {
+                    backgroundColor: 'rgba(255,255,255,0.05)',
+                    borderColor: 'rgba(255,255,255,0.08)',
+                    color: 'rgba(255,255,255,0.6)',
+                  }}
                 >
                   {r.emoji} <span>{r.users.length}</span>
                 </button>
@@ -282,12 +301,22 @@ const MessageBubble = ({ message, isSelf, showAvatar, showName }) => {
             </span>
             {isSelf && (
               <span className="text-white/30">
-                {message.readBy?.length > 1 ? <Checks size={12} weight="bold" className="text-violet-400" /> : <Check size={12} weight="bold" />}
+                {message.readBy?.length > 1 ? <Checks size={12} weight="bold" style={{ color: 'var(--accent)' }} /> : <Check size={12} weight="bold" />}
               </span>
             )}
           </div>
         </div>
       </motion.div>
+
+      {/* Delete message confirmation */}
+      <ConfirmModal
+        open={confirmDelete}
+        title="Delete message?"
+        message="This message will be deleted for everyone."
+        confirmLabel="Delete"
+        onConfirm={handleDelete}
+        onCancel={() => setConfirmDelete(false)}
+      />
 
       {/* Context menu */}
       <AnimatePresence>
@@ -301,7 +330,7 @@ const MessageBubble = ({ message, isSelf, showAvatar, showName }) => {
             onReact={handleReact}
             onReply={() => setReplyingTo(message)}
             onEdit={() => setIsEditing(true)}
-            onDelete={handleDelete}
+            onDelete={() => setConfirmDelete(true)}
           />
         )}
       </AnimatePresence>

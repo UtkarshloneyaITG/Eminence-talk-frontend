@@ -109,7 +109,7 @@ const Register = () => {
   };
 
   return (
-    <div ref={containerRef} className="min-h-screen bg-space-950 flex items-center justify-center relative overflow-hidden px-4 py-8">
+    <div ref={containerRef} className="min-h-screen bg-base flex items-center justify-center relative overflow-hidden px-4 py-8">
       <div className="reg-orb-1 absolute top-1/4 right-1/4 w-80 h-80 rounded-full bg-violet-600/10 blur-3xl pointer-events-none" />
       <div className="reg-orb-2 absolute bottom-1/3 left-1/4 w-64 h-64 rounded-full bg-cyan-600/8 blur-3xl pointer-events-none" />
 

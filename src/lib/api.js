@@ -2,6 +2,7 @@ import axios from 'axios';
 
 const api = axios.create({
   baseURL: 'https://eminence-talk-backend.onrender.com',
+  // baseURL: 'http://localhost:5000',
   withCredentials: true,
   timeout: 15000,
 });
@@ -28,6 +29,7 @@ api.interceptors.response.use(
         const refreshToken = localStorage.getItem('et_refresh_token');
         const { data } = await axios.post(
           'https://eminence-talk-backend.onrender.com/api/auth/refresh',
+          // 'http://localhost:5000/api/auth/refresh',
           { refreshToken }
         );
         localStorage.setItem('et_access_token', data.accessToken);

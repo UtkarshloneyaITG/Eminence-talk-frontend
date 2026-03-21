@@ -55,7 +55,7 @@ const Login = () => {
   return (
     <div
       ref={containerRef}
-      className="min-h-screen bg-space-950 flex items-center justify-center relative overflow-hidden px-4"
+      className="min-h-screen bg-base flex items-center justify-center relative overflow-hidden px-4"
     >
       {/* Animated Background Orbs */}
       <div className="auth-orb-1 absolute top-1/4 left-1/4 w-72 h-72 rounded-full bg-violet-600/10 blur-3xl pointer-events-none" />

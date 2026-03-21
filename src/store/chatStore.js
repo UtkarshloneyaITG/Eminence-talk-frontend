@@ -143,6 +143,55 @@ const useChatStore = create((set, get) => ({
     return data.chat;
   },
 
+  // ─── Add a new chat (e.g. friend request accepted) ───────────────────────
+  addChat: (chat) => {
+    set((state) => {
+      const exists = state.chats.find((c) => c._id === chat._id);
+      if (exists) return state;
+      return { chats: [chat, ...state.chats] };
+    });
+  },
+
+  // ─── Clear only one user's sent messages (chat stays in sidebar) ─────────
+  clearChat: (chatId, deletedBy, newLastMessage) => {
+    set((state) => ({
+      messages: {
+        ...state.messages,
+        [chatId]: (state.messages[chatId] || []).filter(
+          (m) => (m.sender?._id ?? m.sender) !== deletedBy
+        ),
+      },
+      chats: state.chats.map((c) =>
+        c._id === chatId ? { ...c, lastMessage: newLastMessage ?? c.lastMessage } : c
+      ),
+    }));
+  },
+
+  // ─── Remove chat (friend removed / chat deleted) ──────────────────────────
+  removeChat: (chatId) => {
+    set((state) => ({
+      chats: state.chats.filter((c) => c._id !== chatId),
+      activeChat: state.activeChat?._id === chatId ? null : state.activeChat,
+      messages: Object.fromEntries(
+        Object.entries(state.messages).filter(([id]) => id !== chatId)
+      ),
+    }));
+  },
+
+  // ─── Update group data inside a chat ────────────────────────────────────
+  updateGroupInChat: (chatId, groupUpdates) => {
+    set((state) => ({
+      chats: state.chats.map((c) =>
+        c._id === chatId
+          ? { ...c, group: { ...c.group, ...groupUpdates } }
+          : c
+      ),
+      activeChat: state.activeChat?._id === chatId
+        ? { ...state.activeChat, group: { ...state.activeChat.group, ...groupUpdates } }
+        : state.activeChat,
+    }));
+  },
+
   // ─── Search ───────────────────────────────────────────────────────────────
   searchMessages: async (chatId, query) => {
     const { data } = await api.get(`/api/messages/${chatId}/search?q=${query}`);

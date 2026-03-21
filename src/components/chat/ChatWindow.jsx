@@ -37,7 +37,10 @@ const ChatWindow = () => {
             size="sm"
             showStatus={!isGroup}
           />
-          <div>
+          <button
+            onClick={() => setRightPanel('profile')}
+            className="text-left hover:opacity-80 transition-opacity"
+          >
             <p className="text-white font-semibold text-sm">{displayName}</p>
             <AnimatePresence mode="wait">
               {typing.length > 0 ? (
@@ -50,7 +53,7 @@ const ChatWindow = () => {
                 </motion.p>
               )}
             </AnimatePresence>
-          </div>
+          </button>
         </div>
 
         <div className="flex items-center gap-1">
@@ -89,17 +92,27 @@ const EmptyState = ({ onToggleSidebar }) => (
     <motion.div
       animate={{ y: [0, -12, 0] }}
       transition={{ duration: 4, repeat: Infinity, ease: 'easeInOut' }}
-      className="w-24 h-24 rounded-3xl bg-gradient-to-br from-violet-600/20 to-cyan-600/20 border border-white/[0.08] flex items-center justify-center mb-6"
+      className="w-24 h-24 rounded-3xl border border-white/[0.08] flex items-center justify-center mb-6"
+      style={{ backgroundColor: 'rgba(var(--accent-rgb), 0.12)' }}
     >
       <motion.div
-        className="w-12 h-12 rounded-2xl bg-gradient-to-br from-violet-500 to-indigo-600"
+        className="w-12 h-12 rounded-2xl"
+        style={{ background: `linear-gradient(135deg, var(--accent), rgba(var(--accent-rgb), 0.6))` }}
         animate={{ rotate: [0, 10, -10, 0] }}
         transition={{ duration: 3, repeat: Infinity }}
       />
     </motion.div>
     <h2 className="text-white/80 font-display text-xl font-bold mb-2">Eminence-Talk</h2>
     <p className="text-white/30 text-sm max-w-xs">Select a conversation or start a new one to begin chatting.</p>
-    <button onClick={onToggleSidebar} className="mt-6 px-5 py-2.5 rounded-xl bg-violet-600/20 hover:bg-violet-600/30 border border-violet-500/20 text-violet-400 text-sm font-medium transition-all md:hidden">
+    <button
+      onClick={onToggleSidebar}
+      className="mt-6 px-5 py-2.5 rounded-xl border text-sm font-medium transition-all md:hidden btn-accent-hover"
+      style={{
+        backgroundColor: 'rgba(var(--accent-rgb), 0.15)',
+        borderColor: 'rgba(var(--accent-rgb), 0.25)',
+        color: 'var(--accent)',
+      }}
+    >
       Open sidebar
     </button>
   </div>

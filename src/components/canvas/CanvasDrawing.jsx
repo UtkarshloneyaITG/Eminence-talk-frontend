@@ -262,7 +262,7 @@ const CanvasDrawing = () => {
   };
 
   return (
-    <div className="w-full h-full bg-space-900 relative flex flex-col">
+    <div className="w-full h-full bg-surface relative flex flex-col">
       {/* Toolbar */}
       <motion.div
         initial={{ y: -60 }}
@@ -350,7 +350,7 @@ const CanvasDrawing = () => {
           {collaborators.slice(0, 5).map((c, i) => (
             <div
               key={c._id || i}
-              className="w-8 h-8 rounded-full bg-gradient-to-br from-violet-600 to-indigo-600 border-2 border-space-900 flex items-center justify-center text-white text-xs font-bold"
+              className="w-8 h-8 rounded-full bg-gradient-to-br from-violet-600 to-indigo-600 border-2 border-surface flex items-center justify-center text-white text-xs font-bold"
               title={c.username}
             >
               {c.username?.[0]?.toUpperCase()}

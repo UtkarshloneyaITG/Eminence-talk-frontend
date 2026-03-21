@@ -8,12 +8,18 @@ import ThreeBackground from '@/components/three/ThreeBackground';
 import useChatStore from '@/store/chatStore';
 import useUIStore from '@/store/uiStore';
 import useAuthStore from '@/store/authStore';
+import useFriendStore from '@/store/friendStore';
 import { getSocket } from '@/lib/socket';
+import toast from 'react-hot-toast';
 
 const Chat = () => {
-  const { addMessage, updateMessage, removeMessage, setTyping, setOnlineUsers, setUserStatus } = useChatStore();
+  const { addMessage, updateMessage, removeMessage, removeChat, addChat, clearChat, setTyping, setOnlineUsers, setUserStatus, updateGroupInChat } = useChatStore();
   const { canvasActive, rightPanel } = useUIStore();
   const { user } = useAuthStore();
+  const { addIncomingRequest, markRequestAccepted, fetchFriendRequests } = useFriendStore();
+
+  // Load friend requests on mount
+  useEffect(() => { fetchFriendRequests(); }, []);
 
   // Bind global socket events
   useEffect(() => {
@@ -28,6 +34,44 @@ const Chat = () => {
     socket.on('typing:stop', ({ chatId, userId }) => setTyping(chatId, { _id: userId }, false));
     socket.on('users:online', setOnlineUsers);
     socket.on('user:status', ({ userId, status }) => setUserStatus(userId, status));
+    socket.on('chat:new', ({ chat }) => addChat(chat));
+    socket.on('chat:removed', ({ chatId }) => removeChat(chatId));
+    socket.on('chat:cleared', ({ chatId, deletedBy, lastMessage }) => clearChat(chatId, deletedBy, lastMessage));
+    socket.on('group:updated', ({ chatId, update }) => updateGroupInChat(chatId, update));
+    socket.on('group:memberAdded', () => { /* new member gets full chat via chat:new */ });
+    socket.on('group:memberRemoved', ({ chatId, removedUserId }) => {
+      // Remove the member from the local group members list
+      const { chats } = useChatStore.getState();
+      const chat = chats.find((c) => c._id === chatId);
+      if (chat?.group?.members) {
+        updateGroupInChat(chatId, {
+          members: chat.group.members.filter(
+            (m) => (m.user?._id ?? m.user) !== removedUserId
+          ),
+        });
+      }
+    });
+    socket.on('group:roleChanged', ({ chatId, userId, role }) => {
+      const { chats } = useChatStore.getState();
+      const chat = chats.find((c) => c._id === chatId);
+      if (chat?.group?.members) {
+        updateGroupInChat(chatId, {
+          members: chat.group.members.map((m) =>
+            (m.user?._id ?? m.user) === userId ? { ...m, role } : m
+          ),
+        });
+      }
+    });
+
+    // Friend request events
+    socket.on('friend:request', ({ from }) => {
+      addIncomingRequest(from);
+      toast(`${from.username} sent you a friend request`, { icon: '👋' });
+    });
+    socket.on('friend:accepted', ({ by }) => {
+      markRequestAccepted(by._id);
+      toast.success(`${by.username} accepted your friend request!`);
+    });
 
     return () => {
       socket.off('message:new');
@@ -38,11 +82,20 @@ const Chat = () => {
       socket.off('typing:stop');
       socket.off('users:online');
       socket.off('user:status');
+      socket.off('chat:new');
+      socket.off('chat:removed');
+      socket.off('chat:cleared');
+      socket.off('group:updated');
+      socket.off('group:memberAdded');
+      socket.off('group:memberRemoved');
+      socket.off('group:roleChanged');
+      socket.off('friend:request');
+      socket.off('friend:accepted');
     };
   }, []);
 
   return (
-    <div className="h-screen w-screen bg-space-950 flex overflow-hidden relative">
+    <div className="h-screen w-screen bg-base flex overflow-hidden relative">
       {/* Three.js background */}
       <ThreeBackground />
 

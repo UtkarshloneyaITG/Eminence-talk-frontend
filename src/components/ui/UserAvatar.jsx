@@ -48,7 +48,7 @@ const UserAvatar = ({ user, size = 'md', showStatus = false, isOnline, className
       )}
       {showStatus && (
         <span
-          className={`absolute bottom-0 right-0 w-2.5 h-2.5 rounded-full border-2 border-space-900 ${statusColor}`}
+          className={`absolute bottom-0 right-0 w-2.5 h-2.5 rounded-full border-2 border-surface ${statusColor}`}
         />
       )}
     </div>

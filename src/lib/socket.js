@@ -8,6 +8,7 @@ export const connectSocket = (token) => {
   if (socket?.connected) return socket;
 
   socket = io('https://eminence-talk-backend.onrender.com', {
+  // socket = io('http://localhost:5000', {
     auth: { token },
     transports: ['websocket', 'polling'],
     reconnection: true,

@@ -48,7 +48,7 @@ const Profile = () => {
   const statusOptions = ['online', 'away', 'busy', 'offline'];
 
   return (
-    <div ref={containerRef} className="min-h-screen bg-space-950 flex flex-col items-center py-12 px-4 relative overflow-hidden">
+    <div ref={containerRef} className="min-h-screen bg-base flex flex-col items-center py-12 px-4 relative overflow-hidden">
       {/* Background orbs */}
       <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[600px] h-[300px] rounded-full bg-violet-600/5 blur-3xl pointer-events-none" />
 
@@ -73,7 +73,7 @@ const Profile = () => {
             {/* Avatar section */}
             <div className="flex items-end justify-between -mt-10 mb-5">
               <label className="relative cursor-pointer group">
-                <div className={`w-20 h-20 rounded-2xl border-4 border-space-950 overflow-hidden ${avatarUploading ? 'opacity-50' : ''}`}>
+                <div className={`w-20 h-20 rounded-2xl border-4 border-base overflow-hidden ${avatarUploading ? 'opacity-50' : ''}`}>
                   <UserAvatar user={user} size="xl" />
                 </div>
                 <div className="absolute inset-0 rounded-2xl bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">

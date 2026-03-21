@@ -131,11 +131,15 @@ const MessageInput = ({ chatId }) => {
             initial={{ height: 0, opacity: 0 }}
             animate={{ height: 'auto', opacity: 1 }}
             exit={{ height: 0, opacity: 0 }}
-            className="flex items-center gap-2 mb-2 px-3 py-2 rounded-xl bg-violet-600/10 border border-violet-500/20"
+            className="flex items-center gap-2 mb-2 px-3 py-2 rounded-xl border"
+            style={{
+              backgroundColor: 'rgba(var(--accent-rgb), 0.08)',
+              borderColor: 'rgba(var(--accent-rgb), 0.2)',
+            }}
           >
-            <div className="w-0.5 h-full bg-violet-500 rounded-full" />
+            <div className="w-0.5 h-full rounded-full" style={{ backgroundColor: 'var(--accent)' }} />
             <div className="flex-1 min-w-0">
-              <span className="text-violet-400 text-xs font-medium">{replyingTo.sender?.username}</span>
+              <span className="text-xs font-medium" style={{ color: 'var(--accent)' }}>{replyingTo.sender?.username}</span>
               <p className="text-white/50 text-xs truncate">{replyingTo.content || `[${replyingTo.type}]`}</p>
             </div>
             <button onClick={clearReply} className="text-white/30 hover:text-white/70 transition-colors">
@@ -150,7 +154,7 @@ const MessageInput = ({ chatId }) => {
         {uploadProgress !== null && (
           <motion.div initial={{ height: 0 }} animate={{ height: 'auto' }} exit={{ height: 0 }} className="mb-2">
             <div className="h-1 bg-white/[0.08] rounded-full overflow-hidden">
-              <motion.div className="h-full bg-violet-500 rounded-full" initial={{ width: 0 }} animate={{ width: `${uploadProgress}%` }} />
+              <motion.div className="h-full rounded-full" style={{ backgroundColor: 'var(--accent)' }} initial={{ width: 0 }} animate={{ width: `${uploadProgress}%` }} />
             </div>
             <p className="text-white/30 text-xs mt-0.5">Uploading... {uploadProgress}%</p>
           </motion.div>
@@ -165,7 +169,7 @@ const MessageInput = ({ chatId }) => {
         </label>
 
         {/* Canvas button */}
-        <button onClick={() => openCanvas(null)} className="p-2.5 rounded-xl text-white/40 hover:text-violet-400 hover:bg-violet-500/10 transition-all shrink-0">
+        <button onClick={() => openCanvas(null)} className="p-2.5 rounded-xl text-white/40 btn-canvas-hover transition-all shrink-0">
           <PenNib size={18} weight="fill" />
         </button>
 
@@ -180,7 +184,7 @@ const MessageInput = ({ chatId }) => {
             }}
             placeholder="Message..."
             rows={1}
-            className="w-full bg-white/[0.06] border border-white/[0.09] rounded-xl px-4 py-2.5 text-white placeholder-white/25 text-sm resize-none focus:outline-none focus:border-violet-500/50 focus:bg-white/[0.08] transition-all duration-200 scrollbar-thin max-h-[140px]"
+            className="w-full bg-white/[0.06] border border-white/[0.09] rounded-xl px-4 py-2.5 text-white placeholder-white/25 text-sm resize-none focus:outline-none focus:bg-white/[0.08] transition-all duration-200 scrollbar-thin max-h-[140px] input-accent-focus"
             style={{ height: 'auto' }}
           />
         </div>
@@ -193,7 +197,11 @@ const MessageInput = ({ chatId }) => {
             disabled={isSending}
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.9 }}
-            className="p-2.5 rounded-xl bg-gradient-to-br from-violet-600 to-indigo-600 text-white shadow-neon shrink-0 disabled:opacity-50"
+            className="p-2.5 rounded-xl text-white shrink-0 disabled:opacity-50"
+            style={{
+              background: `linear-gradient(135deg, var(--accent), rgba(var(--accent-rgb), 0.7))`,
+              boxShadow: `0 0 20px rgba(var(--accent-rgb), 0.45)`,
+            }}
           >
             <PaperPlaneTilt size={18} weight="fill" />
           </motion.button>
