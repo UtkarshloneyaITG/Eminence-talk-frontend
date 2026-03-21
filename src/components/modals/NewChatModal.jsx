@@ -1,6 +1,6 @@
 import { useState, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { X, Search, MessageSquare, Loader2 } from 'lucide-react';
+import { X, MagnifyingGlass, ChatCircle, CircleNotch } from '@phosphor-icons/react';
 import { toast } from 'react-hot-toast';
 import api from '@/lib/api';
 import useUIStore from '@/store/uiStore';
@@ -64,7 +64,7 @@ const NewChatModal = () => {
         <div className="flex items-center justify-between px-5 py-4 border-b border-white/[0.06]">
           <div className="flex items-center gap-2.5">
             <div className="w-8 h-8 rounded-lg bg-violet-500/10 border border-violet-500/20 flex items-center justify-center">
-              <MessageSquare size={15} className="text-violet-400" />
+              <ChatCircle size={15} weight="fill" className="text-violet-400" />
             </div>
             <h2 className="text-white font-semibold text-sm">New Conversation</h2>
           </div>
@@ -72,14 +72,14 @@ const NewChatModal = () => {
             onClick={closeModal}
             className="w-7 h-7 rounded-lg flex items-center justify-center text-white/40 hover:text-white hover:bg-white/[0.06] transition-all"
           >
-            <X size={15} />
+            <X size={15} weight="bold" />
           </button>
         </div>
 
         {/* Search input */}
         <div className="px-5 py-4 border-b border-white/[0.06]">
           <div className="relative">
-            <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-white/30" />
+            <MagnifyingGlass size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-white/30" />
             <input
               autoFocus
               value={query}
@@ -88,7 +88,7 @@ const NewChatModal = () => {
               className="w-full bg-white/[0.04] border border-white/[0.08] rounded-xl pl-9 pr-4 py-2.5 text-sm text-white placeholder-white/30 focus:outline-none focus:border-violet-500/50 focus:bg-violet-500/5 transition-all"
             />
             {isSearching && (
-              <Loader2 size={14} className="absolute right-3 top-1/2 -translate-y-1/2 text-violet-400 animate-spin" />
+              <CircleNotch size={14} className="absolute right-3 top-1/2 -translate-y-1/2 text-violet-400 animate-spin" />
             )}
           </div>
         </div>
@@ -121,7 +121,7 @@ const NewChatModal = () => {
                   <p className="text-xs text-white/40 truncate">{user.email}</p>
                 </div>
                 {isCreating === user._id ? (
-                  <Loader2 size={14} className="text-violet-400 animate-spin shrink-0" />
+                  <CircleNotch size={14} className="text-violet-400 animate-spin shrink-0" />
                 ) : (
                   <span className="text-xs text-violet-400/60 shrink-0">Message</span>
                 )}

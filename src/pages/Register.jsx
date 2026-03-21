@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Eye, EyeOff, Zap, User, Lock, Mail, CheckCircle } from 'lucide-react';
+import { Eye, EyeSlash, Lightning, User, Lock, EnvelopeSimple, CheckCircle } from '@phosphor-icons/react';
 import { gsap, pageEnter, createRipple } from '@/animations/gsapConfig';
 import useAuthStore from '@/store/authStore';
 import toast from 'react-hot-toast';
@@ -40,11 +40,11 @@ const Field = ({ name, label, type = 'text', icon: Icon, placeholder, value, onC
           onClick={onTogglePassword}
           className="absolute right-3.5 top-1/2 -translate-y-1/2 text-white/30 hover:text-white/70 transition-colors"
         >
-          {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
+          {showPassword ? <EyeSlash size={16} /> : <Eye size={16} />}
         </button>
       )}
       {name === 'confirm' && value && !error && (
-        <CheckCircle size={16} className="absolute right-3.5 top-1/2 -translate-y-1/2 text-emerald-400" />
+        <CheckCircle size={16} weight="fill" className="absolute right-3.5 top-1/2 -translate-y-1/2 text-emerald-400" />
       )}
     </div>
     <AnimatePresence>
@@ -127,7 +127,7 @@ const Register = () => {
               animate={{ rotate: [0, 5, -5, 0] }}
               transition={{ duration: 4, repeat: Infinity, ease: 'easeInOut' }}
             >
-              <Zap size={32} className="text-white" />
+              <Lightning size={32} weight="fill" className="text-white" />
             </motion.div>
             <h1 className="text-2xl font-display font-bold text-white mb-1">Create account</h1>
             <p className="text-white/50 text-sm">Join Eminence-Talk today</p>
@@ -147,7 +147,7 @@ const Register = () => {
               name="email"
               label="Email"
               type="email"
-              icon={Mail}
+              icon={EnvelopeSimple}
               placeholder="you@example.com"
               value={form.email}
               onChange={set('email')}

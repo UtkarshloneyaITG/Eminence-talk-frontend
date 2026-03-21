@@ -1,5 +1,5 @@
 import { motion } from 'framer-motion';
-import { X } from 'lucide-react';
+import { X } from '@phosphor-icons/react';
 import useUIStore from '@/store/uiStore';
 import useChatStore from '@/store/chatStore';
 import useAuthStore from '@/store/authStore';
@@ -28,7 +28,7 @@ const RightPanel = () => {
       <div className="flex items-center justify-between p-4 border-b border-white/[0.06]">
         <h3 className="text-white font-semibold text-sm capitalize">{rightPanel}</h3>
         <button onClick={() => setRightPanel(null)} className="text-white/40 hover:text-white transition-colors">
-          <X size={16} />
+          <X size={16} weight="bold" />
         </button>
       </div>
 

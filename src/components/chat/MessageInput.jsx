@@ -1,6 +1,6 @@
 import { useRef, useState, useCallback, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Send, Paperclip, Smile, Mic, X, Image, PenTool } from 'lucide-react';
+import { PaperPlaneTilt, Paperclip, Smiley, Microphone, X, Image, PenNib } from '@phosphor-icons/react';
 import { gsap } from '@/animations/gsapConfig';
 import useChatStore from '@/store/chatStore';
 import useUIStore from '@/store/uiStore';
@@ -139,7 +139,7 @@ const MessageInput = ({ chatId }) => {
               <p className="text-white/50 text-xs truncate">{replyingTo.content || `[${replyingTo.type}]`}</p>
             </div>
             <button onClick={clearReply} className="text-white/30 hover:text-white/70 transition-colors">
-              <X size={14} />
+              <X size={14} weight="bold" />
             </button>
           </motion.div>
         )}
@@ -160,13 +160,13 @@ const MessageInput = ({ chatId }) => {
       <div className="flex items-end gap-2">
         {/* Attachment button */}
         <label className="p-2.5 rounded-xl text-white/40 hover:text-white/80 hover:bg-white/[0.07] cursor-pointer transition-all shrink-0">
-          <Paperclip size={18} />
+          <Paperclip size={18} weight="bold" />
           <input type="file" className="hidden" onChange={handleFileUpload} accept="image/*,video/*,audio/*,.pdf" />
         </label>
 
         {/* Canvas button */}
         <button onClick={() => openCanvas(null)} className="p-2.5 rounded-xl text-white/40 hover:text-violet-400 hover:bg-violet-500/10 transition-all shrink-0">
-          <PenTool size={18} />
+          <PenNib size={18} weight="fill" />
         </button>
 
         {/* Input */}
@@ -195,7 +195,7 @@ const MessageInput = ({ chatId }) => {
             whileTap={{ scale: 0.9 }}
             className="p-2.5 rounded-xl bg-gradient-to-br from-violet-600 to-indigo-600 text-white shadow-neon shrink-0 disabled:opacity-50"
           >
-            <Send size={18} />
+            <PaperPlaneTilt size={18} weight="fill" />
           </motion.button>
         ) : (
           <motion.button
@@ -204,7 +204,7 @@ const MessageInput = ({ chatId }) => {
             whileTap={{ scale: 0.9 }}
             className={`p-2.5 rounded-xl shrink-0 transition-all ${isRecording ? 'bg-red-500 text-white animate-pulse' : 'text-white/40 hover:text-white/80 hover:bg-white/[0.07]'}`}
           >
-            <Mic size={18} />
+            <Microphone size={18} weight={isRecording ? 'fill' : 'regular'} />
           </motion.button>
         )}
       </div>

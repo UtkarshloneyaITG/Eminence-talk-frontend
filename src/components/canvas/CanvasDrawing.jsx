@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { X, Download, Send, Undo, Trash2, Minus, Plus, Circle, Square, Minus as LineIcon, Pipette, Eraser, Pen } from 'lucide-react';
+import { X, DownloadSimple, PaperPlaneTilt, ArrowCounterClockwise, Trash, Minus, Plus, Circle, Square, LineSegment, Eraser, Pencil } from '@phosphor-icons/react';
 import { getSocket } from '@/lib/socket';
 import useUIStore from '@/store/uiStore';
 import useChatStore from '@/store/chatStore';
@@ -9,10 +9,10 @@ import api from '@/lib/api';
 import toast from 'react-hot-toast';
 
 const TOOLS = [
-  { id: 'pen', icon: Pen, label: 'Pen' },
+  { id: 'pen', icon: Pencil, label: 'Pen' },
   { id: 'brush', icon: Circle, label: 'Brush' },
   { id: 'eraser', icon: Eraser, label: 'Eraser' },
-  { id: 'line', icon: LineIcon, label: 'Line' },
+  { id: 'line', icon: LineSegment, label: 'Line' },
   { id: 'rect', icon: Square, label: 'Rectangle' },
 ];
 
@@ -279,7 +279,7 @@ const CanvasDrawing = () => {
             title={label}
             className={`p-2 rounded-xl transition-all ${tool === id ? 'bg-violet-600 text-white shadow-neon' : 'text-white/40 hover:text-white/80 hover:bg-white/[0.07]'}`}
           >
-            <Icon size={16} />
+            <Icon size={16} weight={tool === id ? 'fill' : 'regular'} />
           </motion.button>
         ))}
 
@@ -319,13 +319,13 @@ const CanvasDrawing = () => {
 
         {/* Actions */}
         <button onClick={handleUndo} title="Undo" className="p-2 rounded-xl text-white/40 hover:text-white/80 hover:bg-white/[0.07] transition-all">
-          <Undo size={15} />
+          <ArrowCounterClockwise size={15} weight="bold" />
         </button>
         <button onClick={handleClear} title="Clear" className="p-2 rounded-xl text-white/40 hover:text-red-400 hover:bg-red-500/10 transition-all">
-          <Trash2 size={15} />
+          <Trash size={15} weight="fill" />
         </button>
         <button onClick={handleExport} title="Download" className="p-2 rounded-xl text-white/40 hover:text-cyan-400 hover:bg-cyan-500/10 transition-all">
-          <Download size={15} />
+          <DownloadSimple size={15} weight="bold" />
         </button>
         <motion.button
           whileHover={{ scale: 1.05 }}
@@ -333,10 +333,10 @@ const CanvasDrawing = () => {
           onClick={handleSendToChat}
           className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-gradient-to-r from-violet-600 to-indigo-600 text-white text-xs font-semibold shadow-neon"
         >
-          <Send size={13} /> Send
+          <PaperPlaneTilt size={13} weight="fill" /> Send
         </motion.button>
         <button onClick={closeCanvas} className="p-2 rounded-xl text-white/40 hover:text-white transition-all">
-          <X size={15} />
+          <X size={15} weight="bold" />
         </button>
       </motion.div>
 

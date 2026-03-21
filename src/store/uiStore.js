@@ -48,6 +48,10 @@ const useUIStore = create(
       // Three.js background active
       threeBgEnabled: true,
       toggleThreeBg: () => set((state) => ({ threeBgEnabled: !state.threeBgEnabled })),
+
+      // 3D scene: 'cosmos' | 'aurora' | 'ember' | 'ocean' | 'neon'
+      bgScene: 'cosmos',
+      setBgScene: (scene) => set({ bgScene: scene }),
     }),
     {
       name: 'et-ui',
@@ -57,6 +61,7 @@ const useUIStore = create(
         accentColor: state.accentColor,
         soundEnabled: state.soundEnabled,
         threeBgEnabled: state.threeBgEnabled,
+        bgScene: state.bgScene,
       }),
     }
   )

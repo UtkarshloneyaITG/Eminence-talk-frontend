@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Reply, Edit2, Trash2, Check, CheckCheck } from 'lucide-react';
+import { ArrowBendUpLeft, Pencil, Trash, Check, Checks, CopySimple, Share } from '@phosphor-icons/react';
 import { format } from 'date-fns';
 import { messageAppear } from '@/animations/gsapConfig';
 import useUIStore from '@/store/uiStore';
@@ -70,7 +70,7 @@ const MessageContextMenu = ({ x, y, message, isSelf, onClose, onReact, onReply, 
         onClick={() => { onReply(); onClose(); }}
         className="w-full flex items-center gap-2.5 px-3.5 py-2 text-sm text-white/80 hover:bg-white/[0.06] hover:text-white transition-colors"
       >
-        <span className="text-base w-5 text-center">↩️</span> Reply
+        <ArrowBendUpLeft size={15} className="text-white/50 shrink-0" /> Reply
       </button>
 
       {isSelf && (
@@ -78,7 +78,7 @@ const MessageContextMenu = ({ x, y, message, isSelf, onClose, onReact, onReply, 
           onClick={() => { onEdit(); onClose(); }}
           className="w-full flex items-center gap-2.5 px-3.5 py-2 text-sm text-white/80 hover:bg-white/[0.06] hover:text-white transition-colors"
         >
-          <span className="text-base w-5 text-center">✏️</span> Edit
+          <Pencil size={15} className="text-white/50 shrink-0" /> Edit
         </button>
       )}
 
@@ -90,14 +90,14 @@ const MessageContextMenu = ({ x, y, message, isSelf, onClose, onReact, onReply, 
         }}
         className="w-full flex items-center gap-2.5 px-3.5 py-2 text-sm text-white/80 hover:bg-white/[0.06] hover:text-white transition-colors"
       >
-        <span className="text-base w-5 text-center">📋</span> Copy
+        <CopySimple size={15} className="text-white/50 shrink-0" /> Copy
       </button>
 
       <button
         onClick={() => { toast('Forward coming soon', { icon: '📤' }); onClose(); }}
         className="w-full flex items-center gap-2.5 px-3.5 py-2 text-sm text-white/80 hover:bg-white/[0.06] hover:text-white transition-colors"
       >
-        <span className="text-base w-5 text-center">📤</span> Forward
+        <Share size={15} className="text-white/50 shrink-0" /> Forward
       </button>
 
       {isSelf && (
@@ -105,7 +105,7 @@ const MessageContextMenu = ({ x, y, message, isSelf, onClose, onReact, onReply, 
           onClick={() => { onDelete(); onClose(); }}
           className="w-full flex items-center gap-2.5 px-3.5 py-2 text-sm text-red-400 hover:bg-red-500/10 transition-colors border-t border-white/[0.06] mt-1"
         >
-          <span className="text-base w-5 text-center">🗑️</span> Delete
+          <Trash size={15} className="shrink-0" /> Delete
         </button>
       )}
     </motion.div>
@@ -282,7 +282,7 @@ const MessageBubble = ({ message, isSelf, showAvatar, showName }) => {
             </span>
             {isSelf && (
               <span className="text-white/30">
-                {message.readBy?.length > 1 ? <CheckCheck size={12} className="text-violet-400" /> : <Check size={12} />}
+                {message.readBy?.length > 1 ? <Checks size={12} weight="bold" className="text-violet-400" /> : <Check size={12} weight="bold" />}
               </span>
             )}
           </div>

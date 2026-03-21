@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Eye, EyeOff, Zap, Lock, Mail } from 'lucide-react';
+import { Eye, EyeSlash, Lightning, Lock, EnvelopeSimple } from '@phosphor-icons/react';
 import { gsap, pageEnter, createRipple } from '@/animations/gsapConfig';
 import useAuthStore from '@/store/authStore';
 import toast from 'react-hot-toast';
@@ -83,7 +83,7 @@ const Login = () => {
               animate={{ rotate: [0, 5, -5, 0] }}
               transition={{ duration: 4, repeat: Infinity, ease: 'easeInOut' }}
             >
-              <Zap size={32} className="text-white" />
+              <Lightning size={32} weight="fill" className="text-white" />
             </motion.div>
             <h1 className="text-2xl font-display font-bold text-white mb-1">Welcome back</h1>
             <p className="text-white/50 text-sm">Sign in to Eminence-Talk</p>
@@ -94,7 +94,7 @@ const Login = () => {
             <div>
               <label className="text-white/70 text-sm font-medium mb-2 block">Email</label>
               <div className="relative">
-                <Mail size={16} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-white/30" />
+                <EnvelopeSimple size={16} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-white/30" />
                 <input
                   type="email"
                   value={form.email}
@@ -129,7 +129,7 @@ const Login = () => {
                   onClick={() => setShowPassword(!showPassword)}
                   className="absolute right-3.5 top-1/2 -translate-y-1/2 text-white/30 hover:text-white/70 transition-colors"
                 >
-                  {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
+                  {showPassword ? <EyeSlash size={16} /> : <Eye size={16} />}
                 </button>
               </div>
               <AnimatePresence>

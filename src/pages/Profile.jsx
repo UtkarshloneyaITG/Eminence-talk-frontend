@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import { motion } from 'framer-motion';
-import { Camera, Save, ArrowLeft, Edit3 } from 'lucide-react';
+import { Camera, FloppyDisk, ArrowLeft, PencilSimple } from '@phosphor-icons/react';
 import { useNavigate } from 'react-router-dom';
 import { gsap, pageEnter } from '@/animations/gsapConfig';
 import useAuthStore from '@/store/authStore';
@@ -54,7 +54,7 @@ const Profile = () => {
 
       <div className="w-full max-w-xl relative z-10">
         <button onClick={() => navigate(-1)} className="flex items-center gap-2 text-white/40 hover:text-white mb-6 transition-colors">
-          <ArrowLeft size={16} /> Back
+          <ArrowLeft size={16} weight="bold" /> Back
         </button>
 
         <motion.div
@@ -77,7 +77,7 @@ const Profile = () => {
                   <UserAvatar user={user} size="xl" />
                 </div>
                 <div className="absolute inset-0 rounded-2xl bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
-                  <Camera size={18} className="text-white" />
+                  <Camera size={18} weight="fill" className="text-white" />
                 </div>
                 <input type="file" accept="image/*" className="hidden" onChange={handleAvatarChange} />
                 {avatarUploading && <span className="absolute inset-0 flex items-center justify-center"><span className="w-5 h-5 border-2 border-violet-400/30 border-t-violet-400 rounded-full animate-spin" /></span>}
@@ -90,7 +90,7 @@ const Profile = () => {
                 disabled={saving}
                 className="flex items-center gap-2 px-4 py-2 rounded-xl bg-violet-600 text-white text-sm font-medium hover:bg-violet-500 transition-colors disabled:opacity-50"
               >
-                {editing ? <><Save size={14} />{saving ? 'Saving...' : 'Save'}</> : <><Edit3 size={14} />Edit</>}
+                {editing ? <><FloppyDisk size={14} weight="fill" />{saving ? 'Saving...' : 'Save'}</> : <><PencilSimple size={14} weight="bold" />Edit</>}
               </motion.button>
             </div>
 

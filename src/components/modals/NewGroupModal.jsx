@@ -1,6 +1,6 @@
 import { useState, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { X, Search, Users, Plus, Loader2, CheckCircle2 } from 'lucide-react';
+import { X, MagnifyingGlass, Users, Plus, CircleNotch, CheckCircle } from '@phosphor-icons/react';
 import { toast } from 'react-hot-toast';
 import api from '@/lib/api';
 import useUIStore from '@/store/uiStore';
@@ -78,7 +78,7 @@ const NewGroupModal = () => {
         <div className="flex items-center justify-between px-5 py-4 border-b border-white/[0.06]">
           <div className="flex items-center gap-2.5">
             <div className="w-8 h-8 rounded-lg bg-violet-500/10 border border-violet-500/20 flex items-center justify-center">
-              <Users size={15} className="text-violet-400" />
+              <Users size={15} weight="fill" className="text-violet-400" />
             </div>
             <h2 className="text-white font-semibold text-sm">
               {step === 'members' ? 'Add Members' : 'Group Name'}
@@ -88,7 +88,7 @@ const NewGroupModal = () => {
             onClick={closeModal}
             className="w-7 h-7 rounded-lg flex items-center justify-center text-white/40 hover:text-white hover:bg-white/[0.06] transition-all"
           >
-            <X size={15} />
+            <X size={15} weight="bold" />
           </button>
         </div>
 
@@ -97,7 +97,7 @@ const NewGroupModal = () => {
             {/* Search input */}
             <div className="px-5 py-4 border-b border-white/[0.06]">
               <div className="relative">
-                <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-white/30" />
+                <MagnifyingGlass size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-white/30" />
                 <input
                   autoFocus
                   value={query}
@@ -106,7 +106,7 @@ const NewGroupModal = () => {
                   className="w-full bg-white/[0.04] border border-white/[0.08] rounded-xl pl-9 pr-4 py-2.5 text-sm text-white placeholder-white/30 focus:outline-none focus:border-violet-500/50 focus:bg-violet-500/5 transition-all"
                 />
                 {isSearching && (
-                  <Loader2 size={14} className="absolute right-3 top-1/2 -translate-y-1/2 text-violet-400 animate-spin" />
+                  <CircleNotch size={14} className="absolute right-3 top-1/2 -translate-y-1/2 text-violet-400 animate-spin" />
                 )}
               </div>
 
@@ -120,7 +120,7 @@ const NewGroupModal = () => {
                       className="flex items-center gap-1.5 px-2.5 py-1 bg-violet-500/10 border border-violet-500/20 rounded-full text-xs text-violet-300 cursor-pointer hover:bg-violet-500/20 transition-all"
                     >
                       {user.username}
-                      <X size={10} />
+                      <X size={10} weight="bold" />
                     </span>
                   ))}
                 </div>
@@ -156,7 +156,7 @@ const NewGroupModal = () => {
                         <p className="text-xs text-white/40 truncate">{user.email}</p>
                       </div>
                       {isSelected && (
-                        <CheckCircle2 size={16} className="text-violet-400 shrink-0" />
+                        <CheckCircle size={16} weight="fill" className="text-violet-400 shrink-0" />
                       )}
                     </motion.button>
                   );
@@ -175,7 +175,7 @@ const NewGroupModal = () => {
                 className="flex items-center gap-1.5 px-4 py-2 rounded-xl bg-violet-600 hover:bg-violet-500 disabled:opacity-40 disabled:cursor-not-allowed text-white text-xs font-medium transition-all"
               >
                 Next
-                <Plus size={13} />
+                <Plus size={13} weight="bold" />
               </button>
             </div>
           </>
@@ -210,9 +210,9 @@ const NewGroupModal = () => {
                 className="flex items-center gap-1.5 px-4 py-2 rounded-xl bg-violet-600 hover:bg-violet-500 disabled:opacity-40 disabled:cursor-not-allowed text-white text-xs font-medium transition-all"
               >
                 {isCreating ? (
-                  <><Loader2 size={13} className="animate-spin" /> Creating...</>
+                  <><CircleNotch size={13} className="animate-spin" /> Creating...</>
                 ) : (
-                  <><Users size={13} /> Create Group</>
+                  <><Users size={13} weight="fill" /> Create Group</>
                 )}
               </button>
             </div>

@@ -1,6 +1,6 @@
 import { useEffect, useRef, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Menu, Search, Phone, Video, MoreVertical, PenTool, Pin, ArrowLeft } from 'lucide-react';
+import { List, MagnifyingGlass, Phone, VideoCamera, DotsThreeVertical, PenNib, PushPin, ArrowLeft } from '@phosphor-icons/react';
 import useChatStore from '@/store/chatStore';
 import useUIStore from '@/store/uiStore';
 import useAuthStore from '@/store/authStore';
@@ -30,7 +30,7 @@ const ChatWindow = () => {
             onClick={toggleSidebar}
             className="p-2 rounded-lg hover:bg-white/[0.06] text-white/40 hover:text-white transition-all md:hidden"
           >
-            <Menu size={18} />
+            <List size={18} weight="bold" />
           </button>
           <UserAvatar
             user={{ avatar: isGroup ? { url: activeChat.group?.avatar?.url } : other?.avatar, username: displayName }}
@@ -54,10 +54,10 @@ const ChatWindow = () => {
         </div>
 
         <div className="flex items-center gap-1">
-          <HeaderBtn icon={Search} onClick={() => setRightPanel('search')} title="Search" />
-          <HeaderBtn icon={PenTool} onClick={() => openCanvas(null)} title="Draw" />
-          <HeaderBtn icon={Pin} onClick={() => setRightPanel('pinned')} title="Pinned" />
-          <HeaderBtn icon={MoreVertical} onClick={() => setRightPanel('profile')} title="Info" />
+          <HeaderBtn icon={MagnifyingGlass} onClick={() => setRightPanel('search')} title="Search" />
+          <HeaderBtn icon={PenNib} onClick={() => openCanvas(null)} title="Draw" />
+          <HeaderBtn icon={PushPin} onClick={() => setRightPanel('pinned')} title="Pinned" />
+          <HeaderBtn icon={DotsThreeVertical} onClick={() => setRightPanel('profile')} title="Info" />
         </div>
       </div>
 

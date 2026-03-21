@@ -1,10 +1,18 @@
 import { useEffect, useRef } from 'react';
 import { motion } from 'framer-motion';
-import { X, Zap, Volume2, VolumeX, Monitor, Paintbrush, MousePointer } from 'lucide-react';
+import { X, Lightning, SpeakerHigh, SpeakerSlash, Monitor, PaintBrush, CursorClick, Sparkle } from '@phosphor-icons/react';
 import { gsap } from '@/animations/gsapConfig';
 import useUIStore from '@/store/uiStore';
 import useAuthStore from '@/store/authStore';
 import api from '@/lib/api';
+
+const BG_SCENES = [
+  { id: 'cosmos', label: 'Cosmos',    desc: 'Violet particles & floating orbs',   emoji: '🌌', colors: ['#6366f1', '#8b5cf6', '#06b6d4'] },
+  { id: 'aurora', label: 'Aurora',    desc: 'Flowing northern lights curtains',    emoji: '🌿', colors: ['#10b981', '#06b6d4', '#4ade80'] },
+  { id: 'ember',  label: 'Ember',     desc: 'Rising fire sparks & embers',         emoji: '🔥', colors: ['#f97316', '#ef4444', '#fbbf24'] },
+  { id: 'ocean',  label: 'Ocean',     desc: 'Bioluminescent deep sea particles',   emoji: '🌊', colors: ['#3b82f6', '#06b6d4', '#0ea5e9'] },
+  { id: 'neon',   label: 'Neon Rain', desc: 'Cyberpunk neon falling rain',         emoji: '⚡', colors: ['#ec4899', '#8b5cf6', '#06b6d4'] },
+];
 
 const CURSOR_STYLES = [
   { id: 'particles', label: 'Particles Trail', desc: 'Leaves colorful particles as you move', emoji: '✨' },
@@ -23,7 +31,7 @@ const ACCENT_COLORS = [
 ];
 
 const Settings = ({ onClose }) => {
-  const { cursorStyle, setCursorStyle, accentColor, setAccentColor, soundEnabled, toggleSound, threeBgEnabled, toggleThreeBg } = useUIStore();
+  const { cursorStyle, setCursorStyle, accentColor, setAccentColor, soundEnabled, toggleSound, threeBgEnabled, toggleThreeBg, bgScene, setBgScene } = useUIStore();
   const { user, updateUser } = useAuthStore();
   const containerRef = useRef(null);
 
@@ -59,20 +67,50 @@ const Settings = ({ onClose }) => {
         <div className="flex items-center justify-between px-6 py-4 border-b border-white/[0.06]">
           <div className="flex items-center gap-2.5">
             <div className="w-8 h-8 rounded-xl bg-gradient-to-br from-violet-600 to-indigo-600 flex items-center justify-center">
-              <Zap size={15} className="text-white" />
+              <Lightning size={15} weight="fill" className="text-white" />
             </div>
             <h2 className="text-white font-display font-semibold text-lg">Settings</h2>
           </div>
           <button onClick={onClose} className="text-white/30 hover:text-white transition-colors p-1">
-            <X size={18} />
+            <X size={18} weight="bold" />
           </button>
         </div>
 
         <div className="p-6 space-y-7 max-h-[70vh] overflow-y-auto scrollbar-thin">
+          {/* 3D Scene */}
+          <section>
+            <div className="flex items-center gap-2 mb-4">
+              <Sparkle size={15} weight="fill" className="text-violet-400" />
+              <h3 className="text-white/80 font-medium text-sm">3D Scene</h3>
+            </div>
+            <div className="grid grid-cols-2 gap-2">
+              {BG_SCENES.map(({ id, label, desc, emoji, colors }) => (
+                <motion.button
+                  key={id}
+                  whileHover={{ scale: 1.02 }}
+                  whileTap={{ scale: 0.97 }}
+                  onClick={() => setBgScene(id)}
+                  className={`p-3 rounded-xl text-left border transition-all ${bgScene === id ? 'border-violet-500/50 bg-violet-600/15' : 'border-white/[0.07] bg-white/[0.03] hover:bg-white/[0.06]'}`}
+                >
+                  <div className="flex items-center justify-between mb-2">
+                    <span className="text-xl leading-none">{emoji}</span>
+                    <div className="flex gap-1">
+                      {colors.map((c) => (
+                        <div key={c} className="w-2.5 h-2.5 rounded-full" style={{ backgroundColor: c }} />
+                      ))}
+                    </div>
+                  </div>
+                  <p className={`text-sm font-medium ${bgScene === id ? 'text-violet-300' : 'text-white/70'}`}>{label}</p>
+                  <p className="text-white/30 text-xs mt-0.5 leading-snug">{desc}</p>
+                </motion.button>
+              ))}
+            </div>
+          </section>
+
           {/* Cursor style */}
           <section>
             <div className="flex items-center gap-2 mb-4">
-              <MousePointer size={15} className="text-violet-400" />
+              <CursorClick size={15} className="text-violet-400" />
               <h3 className="text-white/80 font-medium text-sm">Cursor Style</h3>
             </div>
             <div className="grid grid-cols-2 gap-2">
@@ -95,7 +133,7 @@ const Settings = ({ onClose }) => {
           {/* Accent color */}
           <section>
             <div className="flex items-center gap-2 mb-4">
-              <Paintbrush size={15} className="text-violet-400" />
+              <PaintBrush size={15} weight="fill" className="text-violet-400" />
               <h3 className="text-white/80 font-medium text-sm">Accent Color</h3>
             </div>
             <div className="flex gap-3 flex-wrap">
@@ -121,7 +159,7 @@ const Settings = ({ onClose }) => {
           {/* Toggle options */}
           <section>
             <div className="flex items-center gap-2 mb-4">
-              <Monitor size={15} className="text-violet-400" />
+              <Monitor size={15} weight="fill" className="text-violet-400" />
               <h3 className="text-white/80 font-medium text-sm">Experience</h3>
             </div>
             <div className="space-y-3">

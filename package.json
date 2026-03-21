@@ -10,12 +10,12 @@
     "lint": "eslint src/ --ext .jsx,.js"
   },
   "dependencies": {
+    "@phosphor-icons/react": "^2.1.10",
     "@studio-freight/lenis": "^1.0.42",
     "axios": "^1.6.2",
     "date-fns": "^3.0.6",
     "framer-motion": "^10.18.0",
     "gsap": "^3.12.4",
-    "lucide-react": "^0.303.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-hot-toast": "^2.4.1",
