@@ -11,10 +11,10 @@ import TypingIndicator from './TypingIndicator';
 
 const ChatWindow = () => {
   const { activeChat, typingUsers } = useChatStore();
-  const { toggleSidebar, setRightPanel, openCanvas } = useUIStore();
+  const { toggleSidebar, sidebarOpen, setRightPanel, openCanvas } = useUIStore();
   const { user } = useAuthStore();
 
-  if (!activeChat) return <EmptyState onToggleSidebar={toggleSidebar} />;
+  if (!activeChat) return <EmptyState onToggleSidebar={toggleSidebar} sidebarOpen={sidebarOpen} />;
 
   const isGroup = activeChat.type === 'group';
   const other = !isGroup ? activeChat.participants.find((p) => p._id !== user?._id) : null;
@@ -28,7 +28,7 @@ const ChatWindow = () => {
         <div className="flex items-center gap-3">
           <button
             onClick={toggleSidebar}
-            className="p-2 rounded-lg hover:bg-white/[0.06] text-white/40 hover:text-white transition-all md:hidden"
+            className={`p-2 rounded-lg hover:bg-white/[0.06] text-white/40 hover:text-white transition-all ${sidebarOpen ? 'md:hidden' : ''}`}
           >
             <List size={18} weight="bold" />
           </button>
@@ -87,7 +87,7 @@ const HeaderBtn = ({ icon: Icon, onClick, title }) => (
   </motion.button>
 );
 
-const EmptyState = ({ onToggleSidebar }) => (
+const EmptyState = ({ onToggleSidebar, sidebarOpen }) => (
   <div className="flex-1 flex flex-col items-center justify-center text-center p-8 relative">
     <motion.div
       animate={{ y: [0, -12, 0] }}
@@ -104,9 +104,9 @@ const EmptyState = ({ onToggleSidebar }) => (
     </motion.div>
     <h2 className="text-white/80 font-display text-xl font-bold mb-2">Eminence-Talk</h2>
     <p className="text-white/30 text-sm max-w-xs">Select a conversation or start a new one to begin chatting.</p>
-    <button
+    {!sidebarOpen && <button
       onClick={onToggleSidebar}
-      className="mt-6 px-5 py-2.5 rounded-xl border text-sm font-medium transition-all md:hidden btn-accent-hover"
+      className="mt-6 px-5 py-2.5 rounded-xl border text-sm font-medium transition-all btn-accent-hover"
       style={{
         backgroundColor: 'rgba(var(--accent-rgb), 0.15)',
         borderColor: 'rgba(var(--accent-rgb), 0.25)',
@@ -114,7 +114,8 @@ const EmptyState = ({ onToggleSidebar }) => (
       }}
     >
       Open sidebar
-    </button>
+    </button>}
+
   </div>
 );
 

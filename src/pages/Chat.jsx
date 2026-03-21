@@ -21,6 +21,19 @@ const Chat = () => {
   // Load friend requests on mount
   useEffect(() => { fetchFriendRequests(); }, []);
 
+  // Auto-reopen sidebar when resizing to desktop (≥768px)
+  useEffect(() => {
+    const handleResize = () => {
+      if (window.innerWidth >= 768) {
+        const { sidebarOpen, toggleSidebar } = useUIStore.getState();
+        if (!sidebarOpen) toggleSidebar();
+      }
+    };
+    handleResize(); // run on mount in case persisted state is closed
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
+
   // Bind global socket events
   useEffect(() => {
     const socket = getSocket();

@@ -44,6 +44,7 @@ const BG_SCENES = [
 ];
 
 const CURSOR_STYLES = [
+  { id: 'none',      label: 'Default',         desc: 'Normal system cursor',                emoji: '🖱️' },
   { id: 'particles', label: 'Particles Trail', desc: 'Leaves colorful particles as you move', emoji: '✨' },
   { id: 'morph',     label: 'Morph Cursor',    desc: 'Morphs shape on hover interactions',  emoji: '🔮' },
   { id: 'magnetic',  label: 'Magnetic',        desc: 'Attracts to interactive elements',     emoji: '🧲' },
@@ -61,8 +62,6 @@ const ACCENT_COLORS = [
 
 const NAV_SECTIONS = [
   { id: 'appearance', label: 'Appearance', icon: PaintBrush },
-  { id: 'scene',      label: '3D Scene',   icon: Sparkle    },
-  { id: 'cursor',     label: 'Cursor',     icon: CursorClick },
   { id: 'experience', label: 'Experience', icon: Monitor    },
 ];
 
@@ -241,145 +240,218 @@ const ThemePreview = ({ accentColor, bgScene, threeBgEnabled }) => {
 };
 
 /* ─── Section components ─────────────────────────────────────────────── */
-const AppearanceSection = ({ accentColor, onAccentChange }) => (
-  <div className="space-y-8">
-    <div>
-      <h2 className="text-white font-display font-semibold text-xl mb-1">Appearance</h2>
-      <p className="text-white/40 text-sm">Customize the accent color used across the interface.</p>
+const SectionDivider = ({ icon: Icon, label }) => (
+  <div className="flex items-center gap-3">
+    <div className="flex items-center gap-2">
+      <Icon size={14} weight="fill" style={{ color: 'var(--accent)' }} />
+      <span className="text-white/60 text-xs font-semibold uppercase tracking-widest">{label}</span>
     </div>
-
-    <div>
-      <h3 className="text-white/70 text-sm font-medium mb-1 flex items-center gap-2">
-        <PaintBrush size={14} weight="fill" className="text-violet-400" />
-        Accent Color
-      </h3>
-      <p className="text-white/30 text-xs mb-5">Applied to buttons, highlights, selected items, and sent messages.</p>
-
-      <div className="grid grid-cols-6 gap-3 mb-5">
-        {ACCENT_COLORS.map(({ label, value }) => (
-          <button
-            key={value}
-            onClick={() => onAccentChange(value)}
-            title={label}
-            className="group flex flex-col items-center gap-2"
-          >
-            <div
-              className={`w-10 h-10 rounded-xl border-2 transition-all duration-200 hover:scale-110 flex items-center justify-center ${accentColor === value ? 'border-white scale-110' : 'border-transparent hover:border-white/30'}`}
-              style={{ backgroundColor: value, boxShadow: accentColor === value ? `0 0 20px ${value}70` : 'none' }}
-            >
-              {accentColor === value && <Check size={14} weight="bold" className="text-white drop-shadow" />}
-            </div>
-            <span className="text-[10px] text-white/30 group-hover:text-white/60 transition-colors">{label}</span>
-          </button>
-        ))}
-      </div>
-
-      {/* Custom color picker */}
-      <div className="flex items-center gap-3 p-3.5 rounded-xl border border-white/[0.08] bg-white/[0.03] hover:bg-white/[0.05] transition-all">
-        <div className="relative">
-          <input
-            type="color"
-            value={accentColor}
-            onChange={(e) => onAccentChange(e.target.value)}
-            className="w-10 h-10 rounded-xl cursor-pointer border-0 p-0 bg-transparent opacity-0 absolute inset-0"
-            title="Custom color"
-          />
-          <div
-            className="w-10 h-10 rounded-xl border-2 border-white/20 flex items-center justify-center pointer-events-none"
-            style={{ backgroundColor: accentColor }}
-          >
-            <PaintBrush size={12} className="text-white/70" />
-          </div>
-        </div>
-        <div>
-          <p className="text-white/80 text-sm font-medium">Custom Color</p>
-          <p className="text-white/40 text-xs font-mono mt-0.5">{accentColor}</p>
-        </div>
-        <div className="ml-auto text-white/30 text-xs">Click swatch to pick</div>
-      </div>
-    </div>
+    <div className="flex-1 h-px bg-white/[0.06]" />
   </div>
 );
 
-const SceneSection = ({ bgScene, onSceneChange }) => (
-  <div className="space-y-8">
-    <div>
-      <h2 className="text-white font-display font-semibold text-xl mb-1">3D Scene</h2>
-      <p className="text-white/40 text-sm">Choose the animated background that fills your chat environment.</p>
-    </div>
+const AppearanceSection = ({ accentColor, onAccentChange, bgScene, onSceneChange, cursorStyle, onCursorChange }) => {
+  const activeCursor = CURSOR_STYLES.find((c) => c.id === cursorStyle) || CURSOR_STYLES[0];
 
-    <div className="space-y-3">
-      {BG_SCENES.map(({ id, label, desc, emoji, colors, gradient, bgBase }) => (
-        <motion.button
-          key={id}
-          whileHover={{ scale: 1.01 }}
-          whileTap={{ scale: 0.99 }}
-          onClick={() => onSceneChange(id)}
-          className={`w-full p-4 rounded-xl text-left border transition-all duration-200 ${bgScene === id ? 'border-violet-500/50 bg-violet-600/10' : 'border-white/[0.07] bg-white/[0.02] hover:bg-white/[0.05] hover:border-white/[0.12]'}`}
-        >
-          <div className="flex items-center gap-4">
-            {/* Mini scene thumbnail */}
-            <div className="w-16 h-11 rounded-lg overflow-hidden flex-shrink-0 border border-white/[0.1]"
-              style={{ backgroundColor: bgBase }}
-            >
-              <div className="w-full h-full" style={{ background: gradient }} />
-            </div>
+  return (
+    <div className="space-y-5">
+      <div>
+        <h2 className="text-white font-display font-semibold text-xl mb-1">Appearance</h2>
+        <p className="text-white/40 text-sm">Customize colors, background scene, and cursor style.</p>
+      </div>
 
-            <div className="flex-1 text-left">
-              <div className="flex items-center gap-2 mb-1">
-                <span className="text-base leading-none">{emoji}</span>
-                <span className={`text-sm font-semibold ${bgScene === id ? 'text-violet-300' : 'text-white/80'}`}>{label}</span>
-                {bgScene === id && (
-                  <span className="ml-auto text-[10px] bg-violet-600/20 text-violet-400 px-2 py-0.5 rounded-full border border-violet-500/30 font-medium">
-                    Active
-                  </span>
-                )}
+      {/* ── Row 1: Accent (left) + 3D Scene (right) ── */}
+      <div className="grid grid-cols-2 gap-5 items-start">
+
+        {/* Accent Color */}
+        <div className="space-y-3">
+          <SectionDivider icon={PaintBrush} label="Accent Color" />
+          <p className="text-white/30 text-xs">Applied to buttons, highlights, and sent messages.</p>
+
+          <div className="grid grid-cols-6 gap-2">
+            {ACCENT_COLORS.map(({ label, value }) => (
+              <button
+                key={value}
+                onClick={() => onAccentChange(value)}
+                title={label}
+                className="group flex flex-col items-center gap-2"
+              >
+                <div
+                  className={`w-10 h-10 rounded-xl border-2 transition-all duration-200 hover:scale-110 flex items-center justify-center ${accentColor === value ? 'border-white scale-110' : 'border-transparent hover:border-white/30'}`}
+                  style={{ backgroundColor: value, boxShadow: accentColor === value ? `0 0 20px ${value}70` : 'none' }}
+                >
+                  {accentColor === value && <Check size={14} weight="bold" className="text-white drop-shadow" />}
+                </div>
+                <span className="text-[10px] text-white/30 group-hover:text-white/60 transition-colors">{label}</span>
+              </button>
+            ))}
+          </div>
+
+          <div className="flex items-center gap-3 p-3 rounded-xl border border-white/[0.08] bg-white/[0.03] hover:bg-white/[0.05] transition-all">
+            <div className="relative">
+              <input
+                type="color"
+                value={accentColor}
+                onChange={(e) => onAccentChange(e.target.value)}
+                className="w-9 h-9 rounded-xl cursor-pointer border-0 p-0 bg-transparent opacity-0 absolute inset-0"
+                title="Custom color"
+              />
+              <div
+                className="w-9 h-9 rounded-xl border-2 border-white/20 flex items-center justify-center pointer-events-none"
+                style={{ backgroundColor: accentColor }}
+              >
+                <PaintBrush size={11} className="text-white/70" />
               </div>
-              <p className="text-white/35 text-xs leading-relaxed">{desc}</p>
             </div>
-
-            {/* Color dots */}
-            <div className="flex gap-1.5 flex-shrink-0">
-              {colors.map((c) => (
-                <div key={c} className="w-3 h-3 rounded-full border border-white/10" style={{ backgroundColor: c }} />
-              ))}
+            <div>
+              <p className="text-white/80 text-sm font-medium">Custom Color</p>
+              <p className="text-white/40 text-xs font-mono mt-0.5">{accentColor}</p>
             </div>
+            <div className="ml-auto text-white/30 text-xs">Click to pick</div>
           </div>
-        </motion.button>
-      ))}
-    </div>
-  </div>
-);
+        </div>
 
-const CursorSection = ({ cursorStyle, onCursorChange }) => (
-  <div className="space-y-8">
-    <div>
-      <h2 className="text-white font-display font-semibold text-xl mb-1">Cursor Style</h2>
-      <p className="text-white/40 text-sm">Pick an animated cursor effect for your mouse.</p>
-    </div>
+        {/* 3D Scene */}
+        <div className="space-y-3">
+          <SectionDivider icon={Sparkle} label="3D Scene" />
+          <p className="text-white/30 text-xs">Animated background that fills your chat environment.</p>
 
-    <div className="grid grid-cols-2 gap-3">
-      {CURSOR_STYLES.map(({ id, label, desc, emoji }) => (
-        <motion.button
-          key={id}
-          whileHover={{ scale: 1.02 }}
-          whileTap={{ scale: 0.97 }}
-          onClick={() => onCursorChange(id)}
-          className={`p-4 rounded-xl text-left border transition-all ${cursorStyle === id ? 'border-violet-500/50 bg-violet-600/15' : 'border-white/[0.07] bg-white/[0.03] hover:bg-white/[0.06] hover:border-white/[0.12]'}`}
-        >
-          <span className="text-3xl mb-3 block">{emoji}</span>
-          <p className={`text-sm font-semibold ${cursorStyle === id ? 'text-violet-300' : 'text-white/80'}`}>{label}</p>
-          <p className="text-white/30 text-xs mt-1 leading-relaxed">{desc}</p>
-          {cursorStyle === id && (
-            <span className="inline-block mt-3 text-[10px] bg-violet-600/20 text-violet-400 px-2 py-0.5 rounded-full border border-violet-500/30 font-medium">
-              Active
-            </span>
-          )}
-        </motion.button>
-      ))}
+          <div className="space-y-1.5">
+            {BG_SCENES.map(({ id, label, desc, emoji, colors, gradient, bgBase }) => {
+              const isActive = bgScene === id;
+              return (
+                <motion.button
+                  key={id}
+                  whileTap={{ scale: 0.99 }}
+                  onClick={() => onSceneChange(id)}
+                  className="w-full flex items-center gap-3 p-3 rounded-xl text-left border transition-all duration-200"
+                  style={isActive ? {
+                    borderColor: 'rgba(var(--accent-rgb), 0.4)',
+                    backgroundColor: 'rgba(var(--accent-rgb), 0.08)',
+                  } : {
+                    borderColor: 'rgba(255,255,255,0.06)',
+                    backgroundColor: 'rgba(255,255,255,0.02)',
+                  }}
+                >
+                  <div className="w-14 h-9 rounded-lg overflow-hidden shrink-0 border border-white/[0.1]" style={{ backgroundColor: bgBase }}>
+                    <div className="w-full h-full" style={{ background: gradient }} />
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-center gap-2 mb-0.5">
+                      <span className="text-sm leading-none">{emoji}</span>
+                      <span className={`text-sm font-semibold ${isActive ? 'text-white' : 'text-white/75'}`}>{label}</span>
+                    </div>
+                    <p className="text-white/30 text-xs truncate">{desc}</p>
+                  </div>
+                  <div className="flex gap-1 shrink-0">
+                    {colors.map((c) => (
+                      <div key={c} className="w-2.5 h-2.5 rounded-full border border-white/10" style={{ backgroundColor: c }} />
+                    ))}
+                  </div>
+                  <div
+                    className="w-4 h-4 rounded-full border-2 shrink-0 flex items-center justify-center transition-all ml-1"
+                    style={isActive
+                      ? { borderColor: 'var(--accent)', backgroundColor: 'var(--accent)' }
+                      : { borderColor: 'rgba(255,255,255,0.2)' }
+                    }
+                  >
+                    {isActive && <motion.div initial={{ scale: 0 }} animate={{ scale: 1 }} className="w-1.5 h-1.5 rounded-full bg-white" />}
+                  </div>
+                </motion.button>
+              );
+            })}
+          </div>
+        </div>
+
+      </div>{/* end row-1 grid */}
+
+      {/* ── Row 2: Cursor Style — full width ── */}
+      <div className="space-y-3">
+        <SectionDivider icon={CursorClick} label="Cursor Style" />
+
+        <div className="flex gap-4">
+          {/* Perfect-cube preview box — height driven by the options list */}
+          <div
+            className="relative w-44 self-stretch shrink-0 rounded-xl border overflow-hidden flex flex-col items-center justify-center gap-2"
+            style={{ background: 'rgba(var(--accent-rgb), 0.05)', borderColor: 'rgba(var(--accent-rgb), 0.18)' }}
+          >
+            <div className="absolute inset-0 opacity-[0.04]"
+              style={{ backgroundImage: 'radial-gradient(circle, white 1px, transparent 1px)', backgroundSize: '18px 18px' }}
+            />
+            <motion.span
+              key={activeCursor.id}
+              initial={{ scale: 0.4, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              transition={{ type: 'spring', stiffness: 300, damping: 20 }}
+              className="text-5xl relative z-10"
+            >
+              {activeCursor.emoji}
+            </motion.span>
+            <motion.p
+              key={activeCursor.label}
+              initial={{ opacity: 0, y: 4 }}
+              animate={{ opacity: 1, y: 0 }}
+              className="text-xs text-white/50 font-medium relative z-10 text-center px-2"
+            >
+              {activeCursor.label}
+            </motion.p>
+            <motion.p
+              key={activeCursor.desc}
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              className="text-[10px] text-white/25 relative z-10 text-center px-3"
+            >
+              {activeCursor.desc}
+            </motion.p>
+          </div>
+
+          {/* Options — fill remaining width with 2 columns */}
+          <div className="flex-1 grid grid-cols-2 gap-2 content-start">
+            {CURSOR_STYLES.map(({ id, label, desc, emoji }) => {
+              const isActive = cursorStyle === id;
+              return (
+                <motion.button
+                  key={id}
+                  whileTap={{ scale: 0.985 }}
+                  onClick={() => onCursorChange(id)}
+                  className="flex items-center gap-3 px-4 py-3 h-[58px] rounded-xl border text-left transition-all duration-200"
+                  style={isActive ? {
+                    borderColor: 'rgba(var(--accent-rgb), 0.4)',
+                    backgroundColor: 'rgba(var(--accent-rgb), 0.08)',
+                  } : {
+                    borderColor: 'rgba(255,255,255,0.06)',
+                    backgroundColor: 'rgba(255,255,255,0.02)',
+                  }}
+                >
+                  <div
+                    className="w-9 h-9 rounded-xl flex items-center justify-center text-xl shrink-0"
+                    style={isActive ? { backgroundColor: 'rgba(var(--accent-rgb), 0.18)' } : { backgroundColor: 'rgba(255,255,255,0.05)' }}
+                  >
+                    {emoji}
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <p className={`text-sm font-semibold ${isActive ? 'text-white' : 'text-white/70'}`}>{label}</p>
+                    <p className="text-white/30 text-xs mt-0.5 truncate">{desc}</p>
+                  </div>
+                  <div
+                    className="w-4 h-4 rounded-full border-2 shrink-0 flex items-center justify-center transition-all"
+                    style={isActive
+                      ? { borderColor: 'var(--accent)', backgroundColor: 'var(--accent)' }
+                      : { borderColor: 'rgba(255,255,255,0.2)' }
+                    }
+                  >
+                    {isActive && <motion.div initial={{ scale: 0 }} animate={{ scale: 1 }} className="w-1.5 h-1.5 rounded-full bg-white" />}
+                  </div>
+                </motion.button>
+              );
+            })}
+          </div>
+        </div>
+      </div>{/* end cursor row */}
     </div>
-  </div>
-);
+  );
+};
+
 
 const ToggleRow = ({ label, desc, value, onToggle }) => (
   <div className="flex items-center justify-between py-3.5 px-4 rounded-xl bg-white/[0.03] border border-white/[0.06] hover:bg-white/[0.05] transition-all">
@@ -505,8 +577,8 @@ const Settings = () => {
         </nav>
 
         {/* ── Center content ── */}
-        <div className="flex-1 overflow-y-auto scrollbar-thin p-8">
-          <div className="max-w-lg">
+        <div className="flex-1 overflow-y-auto scrollbar-thin p-6">
+          <div>
             <AnimatePresence mode="wait">
               <motion.div
                 key={activeSection}
@@ -516,13 +588,11 @@ const Settings = () => {
                 transition={{ duration: 0.2, ease: 'easeOut' }}
               >
                 {activeSection === 'appearance' && (
-                  <AppearanceSection accentColor={accentColor} onAccentChange={handleAccentChange} />
-                )}
-                {activeSection === 'scene' && (
-                  <SceneSection bgScene={bgScene} onSceneChange={setBgScene} />
-                )}
-                {activeSection === 'cursor' && (
-                  <CursorSection cursorStyle={cursorStyle} onCursorChange={handleCursorChange} />
+                  <AppearanceSection
+                    accentColor={accentColor} onAccentChange={handleAccentChange}
+                    bgScene={bgScene} onSceneChange={setBgScene}
+                    cursorStyle={cursorStyle} onCursorChange={handleCursorChange}
+                  />
                 )}
                 {activeSection === 'experience' && (
                   <ExperienceSection

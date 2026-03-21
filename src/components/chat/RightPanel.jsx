@@ -82,6 +82,10 @@ const GroupPanel = ({ chat, onClose }) => {
   const [searchResults, setSearchResults] = useState([]);
   const [openMenuId, setOpenMenuId] = useState(null);
   const nameRef = useRef(null);
+  const [savingName, setSavingName] = useState(false);
+  const [loadingLeave, setLoadingLeave] = useState(false);
+  const [loadingDelete, setLoadingDelete] = useState(false);
+  const [loadingMemberIds, setLoadingMemberIds] = useState(new Set());
 
   useEffect(() => {
     if (editingName) nameRef.current?.focus();
@@ -98,35 +102,43 @@ const GroupPanel = ({ chat, onClose }) => {
 
   const saveName = async () => {
     if (!nameInput.trim() || nameInput === group.name) { setEditingName(false); return; }
+    setSavingName(true);
     try {
       await api.patch(`/api/groups/${group._id}`, { name: nameInput });
       updateGroupInChat(chat._id, { name: nameInput });
       toast.success('Group name updated');
     } catch { toast.error('Failed to update name'); }
+    setSavingName(false);
     setEditingName(false);
   };
 
   const handleLeave = async () => {
-    setConfirmLeave(false);
+    setLoadingLeave(true);
     try {
       await api.delete(`/api/groups/${group._id}/members/${user._id}`);
       removeChat(chat._id);
       onClose();
       toast.success('Left group');
     } catch { toast.error('Failed to leave group'); }
+    setLoadingLeave(false);
+    setConfirmLeave(false);
   };
 
   const handleDeleteGroup = async () => {
-    setConfirmDelete(false);
+    setLoadingDelete(true);
     try {
       await api.delete(`/api/groups/${group._id}`);
       removeChat(chat._id);
       onClose();
       toast.success('Group deleted');
     } catch { toast.error('Failed to delete group'); }
+    setLoadingDelete(false);
+    setConfirmDelete(false);
   };
 
   const handleRemoveMember = async (memberId) => {
+    if (loadingMemberIds.has(memberId)) return;
+    setLoadingMemberIds((prev) => new Set(prev).add(memberId));
     try {
       await api.delete(`/api/groups/${group._id}/members/${memberId}`);
       updateGroupInChat(chat._id, {
@@ -136,9 +148,12 @@ const GroupPanel = ({ chat, onClose }) => {
     } catch (err) {
       toast.error(err.response?.data?.error || 'Failed to remove member');
     }
+    setLoadingMemberIds((prev) => { const s = new Set(prev); s.delete(memberId); return s; });
   };
 
   const handleRoleChange = async (memberId, newRole) => {
+    if (loadingMemberIds.has(memberId)) return;
+    setLoadingMemberIds((prev) => new Set(prev).add(memberId));
     try {
       await api.patch(`/api/groups/${group._id}/members/${memberId}/role`, { role: newRole });
       updateGroupInChat(chat._id, {
@@ -150,9 +165,12 @@ const GroupPanel = ({ chat, onClose }) => {
     } catch (err) {
       toast.error(err.response?.data?.error || 'Failed to update role');
     }
+    setLoadingMemberIds((prev) => { const s = new Set(prev); s.delete(memberId); return s; });
   };
 
   const handleAddMember = async (userId) => {
+    if (loadingMemberIds.has(userId)) return;
+    setLoadingMemberIds((prev) => new Set(prev).add(userId));
     try {
       await api.post(`/api/groups/${group._id}/members`, { userIds: [userId] });
       toast.success('Member added');
@@ -162,6 +180,7 @@ const GroupPanel = ({ chat, onClose }) => {
       const { data } = await api.get(`/api/groups/${group._id}`);
       updateGroupInChat(chat._id, { members: data.group.members });
     } catch { toast.error('Failed to add member'); }
+    setLoadingMemberIds((prev) => { const s = new Set(prev); s.delete(userId); return s; });
   };
 
   const roleIcon = (role) => {
@@ -204,8 +223,10 @@ const GroupPanel = ({ chat, onClose }) => {
                 className="flex-1 bg-white/[0.07] border rounded-lg px-2 py-1 text-white text-sm focus:outline-none"
                 style={{ borderColor: 'rgba(var(--accent-rgb), 0.4)' }}
               />
-              <button onClick={saveName} className="text-emerald-400 hover:text-emerald-300">
-                <Check size={15} weight="bold" />
+              <button onClick={saveName} disabled={savingName} className="text-emerald-400 hover:text-emerald-300 disabled:opacity-40">
+                {savingName
+                  ? <svg className="animate-spin w-3.5 h-3.5" viewBox="0 0 24 24" fill="none"><circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"/><path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"/></svg>
+                  : <Check size={15} weight="bold" />}
               </button>
               <button onClick={() => { setEditingName(false); setNameInput(group.name); }} className="text-white/30 hover:text-white/60">
                 <X size={14} weight="bold" />
@@ -267,6 +288,11 @@ const GroupPanel = ({ chat, onClose }) => {
                       <span className="text-white/70 text-xs flex-1 truncate">{u.username}</span>
                       {alreadyIn ? (
                         <span className="text-white/25 text-[10px] shrink-0">Already in</span>
+                      ) : loadingMemberIds.has(u._id) ? (
+                        <svg className="animate-spin w-3.5 h-3.5 shrink-0" style={{ color: 'var(--accent)' }} viewBox="0 0 24 24" fill="none">
+                          <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"/>
+                          <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"/>
+                        </svg>
                       ) : (
                         <button
                           onClick={() => handleAddMember(u._id)}
@@ -311,12 +337,14 @@ const GroupPanel = ({ chat, onClose }) => {
 
                   {/* Action button — three-dots */}
                   {canInteract && (
-                    <button
-                      onClick={(e) => { e.stopPropagation(); setOpenMenuId(openMenuId === memberId ? null : memberId); }}
-                      className="opacity-0 group-hover:opacity-100 p-1 rounded-lg text-white/30 hover:text-white hover:bg-white/[0.07] transition-all"
-                    >
-                      <DotsThreeVertical size={14} weight="bold" />
-                    </button>
+                    loadingMemberIds.has(memberId)
+                      ? <svg className="animate-spin w-3.5 h-3.5 text-white/30 shrink-0" viewBox="0 0 24 24" fill="none"><circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"/><path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"/></svg>
+                      : <button
+                          onClick={(e) => { e.stopPropagation(); setOpenMenuId(openMenuId === memberId ? null : memberId); }}
+                          className="opacity-0 group-hover:opacity-100 p-1 rounded-lg text-white/30 hover:text-white hover:bg-white/[0.07] transition-all"
+                        >
+                          <DotsThreeVertical size={14} weight="bold" />
+                        </button>
                   )}
 
                   {/* Popover menu */}
@@ -346,7 +374,8 @@ const GroupPanel = ({ chat, onClose }) => {
           {/* Leave group — everyone */}
           <button
             onClick={() => setConfirmLeave(true)}
-            className="w-full flex items-center gap-2 px-3 py-2.5 rounded-xl text-sm text-red-400 bg-red-500/10 hover:bg-red-500/20 border border-red-500/20 transition-all"
+            disabled={loadingLeave}
+            className="w-full flex items-center gap-2 px-3 py-2.5 rounded-xl text-sm text-red-400 bg-red-500/10 hover:bg-red-500/20 border border-red-500/20 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
           >
             <SignOut size={15} weight="bold" />
             Leave Group
@@ -356,7 +385,8 @@ const GroupPanel = ({ chat, onClose }) => {
           {isOwner && (
             <button
               onClick={() => setConfirmDelete(true)}
-              className="w-full flex items-center gap-2 px-3 py-2.5 rounded-xl text-sm text-red-500 bg-red-500/15 hover:bg-red-500/25 border border-red-500/30 transition-all"
+              disabled={loadingDelete}
+              className="w-full flex items-center gap-2 px-3 py-2.5 rounded-xl text-sm text-red-500 bg-red-500/15 hover:bg-red-500/25 border border-red-500/30 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
             >
               <Trash size={15} weight="bold" />
               Delete Group
@@ -370,6 +400,7 @@ const GroupPanel = ({ chat, onClose }) => {
         title="Leave group?"
         message={`You will leave "${group?.name}". You won't receive new messages unless added back.`}
         confirmLabel="Leave"
+        loading={loadingLeave}
         onConfirm={handleLeave}
         onCancel={() => setConfirmLeave(false)}
       />
@@ -379,6 +410,7 @@ const GroupPanel = ({ chat, onClose }) => {
         title="Delete group?"
         message={`This will permanently delete "${group?.name}" and all its messages for everyone. This cannot be undone.`}
         confirmLabel="Delete Group"
+        loading={loadingDelete}
         onConfirm={handleDeleteGroup}
         onCancel={() => setConfirmDelete(false)}
       />
@@ -396,11 +428,13 @@ const RightPanel = () => {
   const [pinnedMessages, setPinnedMessages] = useState([]);
   const [confirmRemove, setConfirmRemove] = useState(false);
   const [confirmDeleteChat, setConfirmDeleteChat] = useState(false);
+  const [loadingDeleteChat, setLoadingDeleteChat] = useState(false);
+  const [loadingRemoveFriend, setLoadingRemoveFriend] = useState(false);
 
   const isGroup = activeChat?.type === 'group';
 
   const handleDeleteChat = async () => {
-    setConfirmDeleteChat(false);
+    setLoadingDeleteChat(true);
     try {
       const { data } = await api.delete(`/api/chats/${activeChat._id}`);
       clearChat(activeChat._id, user._id, data.lastMessage ?? null);
@@ -409,6 +443,8 @@ const RightPanel = () => {
     } catch {
       toast.error('Failed to clear chat');
     }
+    setLoadingDeleteChat(false);
+    setConfirmDeleteChat(false);
   };
 
   useEffect(() => {
@@ -472,13 +508,22 @@ const RightPanel = () => {
                       <p className="text-white/50 text-xs">Remove <span className="text-white font-medium">{other.username}</span> from friends?</p>
                       <div className="flex gap-2 w-full">
                         <button
+                          disabled={loadingRemoveFriend}
                           onClick={async () => {
+                            setLoadingRemoveFriend(true);
                             const ok = await removeFriend(other._id);
+                            setLoadingRemoveFriend(false);
                             if (ok) setRightPanel(null);
                             setConfirmRemove(false);
                           }}
-                          className="flex-1 px-3 py-1.5 rounded-lg text-xs font-medium text-white bg-red-500 hover:bg-red-600 transition-all"
+                          className="flex-1 px-3 py-1.5 rounded-lg text-xs font-medium text-white bg-red-500 hover:bg-red-600 transition-all disabled:opacity-60 disabled:cursor-not-allowed flex items-center justify-center gap-1.5"
                         >
+                          {loadingRemoveFriend && (
+                            <svg className="animate-spin w-3 h-3" viewBox="0 0 24 24" fill="none">
+                              <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"/>
+                              <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"/>
+                            </svg>
+                          )}
                           Yes, Remove
                         </button>
                         <button
@@ -538,6 +583,7 @@ const RightPanel = () => {
         title="Delete chat?"
         message="Your sent messages will be deleted. The conversation will remain visible with your friend's messages."
         confirmLabel="Delete"
+        loading={loadingDeleteChat}
         onConfirm={handleDeleteChat}
         onCancel={() => setConfirmDeleteChat(false)}
       />

@@ -4,8 +4,8 @@ import { persist } from 'zustand/middleware';
 const useUIStore = create(
   persist(
     (set) => ({
-      // Cursor style: 'particles' | 'morph' | 'magnetic' | 'gsap'
-      cursorStyle: 'morph',
+      // Cursor style: 'none' | 'particles' | 'morph' | 'magnetic' | 'gsap'
+      cursorStyle: 'none',
       setCursorStyle: (style) => set({ cursorStyle: style }),
 
       // Theme accent color
